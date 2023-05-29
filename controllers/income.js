@@ -48,3 +48,25 @@ exports.deleteIncome = async(req, res) => {
                 console.log("Income deleted" + id);
         }).catch((err) =>res.status(500).json({message: err.message}));
 }
+
+exports.incomeByMonth = async (req, res) => {
+  try {
+    const incomes = await IncomeSchema.aggregate([
+      {
+        $project: {
+          month: { $month: "$date" },
+          amount: 1,
+        },
+      },
+      {
+        $group: {
+          _id: { month: "$month" },
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+    res.status(200).json(incomes);
+  } catch (err) {
+    res.status(500).json({ messagge: "Server Error" });
+  }
+};

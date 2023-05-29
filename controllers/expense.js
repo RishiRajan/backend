@@ -46,3 +46,25 @@ exports.deleteExpense = async (req, res) => {
     })
     .catch((err) => res.status(500).json({ message: err.message }));
 };
+
+exports.expenseByMonth = async (req, res) => {
+  try {
+    const expenses = await ExpenseSchema.aggregate([
+      {
+        $project: {
+          month: { $month: "$date" },
+          amount: 1,
+        },
+      },
+      {
+        $group: {
+          _id: { month: "$month" },
+          total: { $sum: "$amount" },
+        },
+      },
+    ]);
+    res.status(200).json(expenses);
+  } catch (err) {
+    res.status(500).json({ messagge: "Server Error" });
+  }
+};
