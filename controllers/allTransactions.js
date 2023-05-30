@@ -8,7 +8,7 @@ exports.getAll = async (req, res) => {
     const data = [...expenses, ...incomes];
 
     data.sort((a, b) => {
-      if (a.date < b.date) {
+      if (a.date > b.date) {
         return -1;
       }
     });
